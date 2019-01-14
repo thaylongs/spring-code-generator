@@ -1,0 +1,14 @@
+package {{packageRepo}};
+
+import {{packageEntities}}.{{entity}};
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+/**
+ * Spring Data JPA repository for the {@link {{entity}}} entity.
+ */
+@Repository
+public interface {{entity}}Repository extends JpaRepository<{{entity}}, Long> {
+}
+

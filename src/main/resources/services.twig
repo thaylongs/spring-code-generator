@@ -1,0 +1,65 @@
+package {{basepackage}}.services;
+import {{basepackage}}.entities.{{entity}};
+import {{basepackage}}.repository.{{entity}}Repository;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Service Implementation for managing {{entity}}.
+ */
+@Log4j2
+@Transactional
+public class {{entity}}Service {
+
+  @Autowired
+  private  {{entity}}Repository {{entityL}}Repository;
+
+  /**
+   * Save a {@link {{entity}}}.
+   *
+   * @param folderDataLake the entity to save
+   * @return the persisted entity
+   */
+  public {{entity}} save({{entity}} folderDataLake) {
+    log.debug("Request to save {{entity}} : {}", folderDataLake);
+    return {{entityL}}Repository.save(folderDataLake);
+  }
+
+  /**
+   * Get all the {@link {{entity}}}.
+   *
+   * @return the list of entities
+   */
+  @Transactional(readOnly = true)
+  public List<{{entity}}> findAll() {
+    log.debug("Request to get all {{entity}}");
+    return {{entityL}}Repository.findAll();
+  }
+
+  /**
+   * Get one {@link {{entity}}} by id.
+   *
+   * @param id the id of the entity
+   * @return the entity
+   */
+  @Transactional(readOnly = true)
+  public Optional<{{entity}}> findOne(Long id) {
+    log.debug("Request to get {{entity}} : {}", id);
+    return {{entityL}}Repository.findById(id);
+  }
+
+  /**
+   * Delete the {@link {{entity}}} by id.
+   *
+   * @param id the id of the entity
+   */
+  public void delete(Long id) {
+    log.debug("Request to delete {{entity}} : {}", id);
+    {{entityL}}Repository.deleteById(id);
+  }
+
+}

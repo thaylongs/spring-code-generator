@@ -1,0 +1,95 @@
+package {{basepackage}}.controllers;
+
+import {{basepackage}}.entities.{{entity}};
+import {{basepackage}}.services.{{entity}}Service;
+import {{basepackage}}.controllers.errors.BadRequestAlertException;
+import {{basepackage}}.utils.HeaderUtil;
+import {{basepackage}}.utils.ResponseUtil;
+
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Optional;
+
+/**
+ * REST controller for managing {{entity}}.
+ */
+@Log4j2
+@RestController
+@RequestMapping("{{base_url}}")
+public class {{entity}}Ctrl{
+
+  private static final String BASE_URL = "{{base_url}}/";
+  private static final String ENTITY_NAME = "{{entity}}";
+
+  @Autowired
+  private {{entity}}Service {{entityL}}Service;
+  
+  /**
+   * POST  {{base_url}} : Create a new {@link {{entity}}}.
+   *
+   * @param {{entityL}} the {@link {{entity}}} to create
+   * @return the ResponseEntity with status 201 (Created) and with body the new {@link {{entity}}}, or with status 400 (Bad Request) if the {@link {{entity}}} has already an ID
+   * @throws URISyntaxException if the Location URI syntax is incorrect
+   */
+  @PostMapping
+  public ResponseEntity<{{entity}}> create{{entity}}(@RequestBody {{entity}} {{entityL}}) throws URISyntaxException {
+    log.debug("REST request to save {{entity}} : {}", {{entityL}});
+    if ({{entityL}}.getId() != null) {
+      throw new BadRequestAlertException("A new {{entity}} cannot already have an ID", ENTITY_NAME, "idexists");
+    }
+    {{entity}} result = {{entityL}}Service.save({{entityL}});
+    return ResponseEntity.created(new URI(BASE_URL + result.getId()))
+      .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+      .body(result);
+  }
+
+  /**
+   * PUT  {{base_url}} : Updates an existing {@link {{entity}}}.
+   *
+   * @param {{entityL}} the {@link {{entity}}} to update
+   * @return the ResponseEntity with status 200 (OK) and with body the updated {@link {{entity}}},
+   * or with status 400 (Bad Request) if the {@link {{entity}}} is not valid,
+   * or with status 500 (Internal Server Error) if the {@link {{entity}}} couldn't be updated
+   * @throws URISyntaxException if the Location URI syntax is incorrect
+   */
+  @PutMapping
+  public ResponseEntity<{{entity}}> update{{entity}}(@RequestBody {{entity}} {{entityL}}) throws URISyntaxException {
+    log.debug("REST request to update {{entity}} : {}", {{entityL}});
+    if ({{entityL}}.getId() == null) {
+      throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+    }
+    {{entity}} result = {{entityL}}Service.save({{entityL}});
+    return ResponseEntity.ok()
+      .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, {{entityL}}.getId().toString()))
+      .body(result);
+  }
+
+  /**
+   * GET  {{base_url}}/:id : get all the {@link {{entity}}}.
+   *
+   * @return the ResponseEntity with status 200 (OK) and the list of {@link {{entity}}} in body
+   */
+  @GetMapping("/{id}")
+  public ResponseEntity<{{entity}}> get{{entity}}(@PathVariable Long id) {
+    Optional<{{entity}}> {{entityL}} = {{entityL}}Service.findOne(id);
+    return ResponseUtil.wrapOrNotFound({{entityL}});
+  }
+
+  /**
+   * DELETE  {{base_url}}/:id : delete the "id" {@link {{entity}}}.
+   *
+   * @param id the id of the {@link {{entity}}} to delete
+   * @return the ResponseEntity with status 200 (OK)
+   */
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete{{entity}}(@PathVariable Long id) {
+    log.debug("REST request to delete {{entity}} : {}", id);
+    {{entityL}}Service.delete(id);
+    return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+  }
+}
