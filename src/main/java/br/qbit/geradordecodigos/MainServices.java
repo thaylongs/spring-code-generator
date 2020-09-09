@@ -3,10 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.geradordecodigos;
+package br.qbit.geradordecodigos;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
@@ -14,16 +12,14 @@ import org.jtwig.JtwigTemplate;
  *
  * @author lmdc
  */
-public class MainController {
+public class MainServices {
 
     public static void main(String[] args) {
+        String basePackage = "br.com.rioformoso";
+        String entity = "Endereco";
+        String entityL = "endereco";
 
-        String basePackage = "br.uff.lmdc.DataLakeService";
-        String entity = "FolderDataLake";
-        String entityL = "folderDataLake";
-        String base_url = "/api/folder";
-
-        JtwigTemplate template = JtwigTemplate.classpathTemplate("controller.twig");
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("kotlin/services.kt.twig");
 
         JtwigModel model = JtwigModel.newModel()
                 .with("entity", entity)
@@ -33,3 +29,4 @@ public class MainController {
     }
 
 }
+

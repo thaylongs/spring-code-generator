@@ -1,0 +1,119 @@
+package {{basepackage}}.controllers;
+
+import {{basepackage}}.controllers.errors.BadRequestAlertException
+import {{basepackage}}.model.{{entity}}
+import {{basepackage}}.service.{{entityL}}Service
+import {{basepackage}}.utils.HeaderUtil
+import mu.KotlinLogging
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import java.io.IOException
+import java.net.URI
+import java.util.*
+import javax.validation.Valid
+import javax.validation.constraints.NotNull
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+
+/**
+ * REST controller for managing {{entity}}
+ */
+@RestController
+@RequestMapping("{{base_url}}")
+class {{entity}}Ctrl(private val {{entityL}}Service: {{entityL}}Service) {
+
+  private val BASE_URL = "{{base_url}}/"
+  private val ENTITY_NAME = "{{entity}}"
+
+  private val log = KotlinLogging.logger {}
+
+  /**
+   * POST  /api/{{entityL}} : Create a new [{{entity}}].
+   *
+   * / * @param {{entityL}} the [] to create
+   * @return the ResponseEntity with status 201 (Created) and with body the new [{{entity}}],
+   * or with status 400 (Bad Request) if the [{{entity}}] has already an ID
+   * @throws URISyntaxException if the Location URI syntax is incorrect
+   */
+  @PostMapping
+  @Throws(Throwable::class)
+  fun create{{entity}}(@RequestBody @Valid {{entityL}}: {{entity}}): ResponseEntity<{{entity}}> {
+    log.debug("REST request to save {{entity}} : {}", {{entityL}})
+    if ({{entityL}}.id != null) {
+      throw BadRequestAlertException("A new {{entity}} cannot already have an ID", ENTITY_NAME, "idexists")
+    }
+    val result: {{entity}} = {{entityL}}Service.save({{entityL}})
+    return ResponseEntity.created(URI(BASE_URL + result.id))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.id.toString()))
+            .body(result)
+  }
+
+  /**
+   * PUT  /api/{{entityL}} : Updates an existing [{{entity}}].
+   *
+   * @param {{entityL}} the [{{entity}}] to update
+   * @return the ResponseEntity with status 200 (OK) and with body the updated [{{entity}}],
+   * or with status 400 (Bad Request) if the [{{entity}}] is not valid,
+   * or with status 500 (Internal Server Error) if the [{{entity}}] couldn't be updated
+   */
+  @PutMapping
+  @Throws(Throwable::class)
+  fun update{{entity}}(@Valid @NotNull @RequestBody {{entityL}}: {{entity}}): ResponseEntity<{{entity}}> {
+    log.debug("REST request to update {{entity}} : {}", {{entityL}})
+    if ({{entityL}}.id == null) {
+      throw  BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull")
+    }
+    val result = {{entityL}}Service.update({{entityL}})
+    return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, {{entityL}}.id.toString()))
+            .body(result)
+  }
+
+  /**
+   * GET   /api/{{entityL}} : get all the [{{entity}}].
+   *
+   * @return the ResponseEntity with status 200 (OK) and the list of [{{entity}}] in body
+   */
+  @GetMapping
+  fun getAll{{entity}}(): List<{{entity}}> {
+    log.debug("REST request to get all {{entity}}")
+    return {{entityL}}Service.findAll()
+  }
+
+  /**
+   * GET  /api/pessoa/lazy : get all the [{{entity}}]..
+   *
+   * @return the ResponseEntity with status 200 (OK) and the list of {Pessoa} in body
+   */
+  @GetMapping("/lazy")
+  fun findAll(pageable: Pageable): Page<{{entity}}> {
+    return {{entityL}}Service.findAll(PageRequest.of(pageable.pageNumber, pageable.pageSize, Sort.by(Sort.Direction.ASC, "nome")))
+  }
+
+  /**
+   * GET  /api/{{entityL}}/:id : get all the [{{entity}}].
+   *
+   * @return the ResponseEntity with status 200 (OK) and the list of [{{entity}}] in body
+   */
+  @GetMapping("/{id}")
+  fun get{{entity}}(@PathVariable("id") id:Long,@PathVariable("id") {{entityL}}: Optional<{{entity}}>): ResponseEntity<{{entity}}> {
+    log.debug("REST request to get {{entity}} with id: {}", id)
+    return ResponseEntity.of({{entityL}})
+  }
+
+  /**
+   * DELETE  /api/{{entityL}}/:id : delete the "id" [{{entity}}].
+   *
+   * @param id the id of the [{{entity}}] to delete
+   * @return the ResponseEntity with status 200 (OK)
+   */
+  @DeleteMapping("/{id}")
+  @Throws(IOException::class)
+  fun delete{{entity}}(@PathVariable id: Long): ResponseEntity<Void> {
+    log.debug("REST request to delete {{entity}} : {}", id)
+    {{entityL}}Service.delete(id)
+    return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build<Void>()
+  }
+}

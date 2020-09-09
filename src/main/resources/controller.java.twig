@@ -4,7 +4,6 @@ import {{basepackage}}.entities.{{entity}};
 import {{basepackage}}.services.{{entity}}Service;
 import {{basepackage}}.controllers.errors.BadRequestAlertException;
 import {{basepackage}}.utils.HeaderUtil;
-import {{basepackage}}.utils.ResponseUtil;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,9 +74,8 @@ public class {{entity}}Ctrl{
    * @return the ResponseEntity with status 200 (OK) and the list of {@link {{entity}}} in body
    */
   @GetMapping("/{id}")
-  public ResponseEntity<{{entity}}> get{{entity}}(@PathVariable Long id) {
-    Optional<{{entity}}> {{entityL}} = {{entityL}}Service.findOne(id);
-    return ResponseUtil.wrapOrNotFound({{entityL}});
+  public ResponseEntity<{{entity}}> get{{entity}}(@PathVariable(name="id") Optional<{{entity}}> {{entityL}} ) {
+    return ResponseEntity.of({{entityL}});
   }
 
   /**

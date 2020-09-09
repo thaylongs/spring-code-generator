@@ -1,0 +1,19 @@
+package {{basepackage}}.services;
+
+import {{basepackage}}.entities.{{entity}}
+import {{basepackage}}.repository.{{entity}}Repository
+
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+
+/**
+ * Service Implementation for managing {{entity}}.
+ */
+@Service
+class {{entity}}Service(repository: {{entity}}Repository) : GenericJpaSpecificationService<{{entity}}, {{entity}}Repository>(repository), ValidEntity<{{entity}}> {
+
+    override fun valid(entity: {{entity}}, isEditing: Boolean) {
+        TODO("Not yet implemented")
+    }
+}
